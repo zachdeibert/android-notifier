@@ -2,10 +2,10 @@ require("amd-loader");
 global.window = new (require("jsdom").JSDOM)().window;
 define(["googleapis", "jquery", "jquery/src/ajax"], (google, $) => {
     const SCOPES = "https://www.googleapis.com/auth/firebase.messaging";
+    const key = require('./service-account.json');
 
     function getAccessToken() {
         return new Promise(function(resolve, reject) {
-            var key = require('./service-account.json');
             var jwtClient = new google.auth.JWT(
                 key.client_email,
                 null,
@@ -40,7 +40,7 @@ define(["googleapis", "jquery", "jquery/src/ajax"], (google, $) => {
                 "Authorization": `Bearer ${accessToken}`
             },
             "method": "POST",
-            "url": "https://fcm.googleapis.com/v1/projects/android-notifier-67ce5/messages:send"
+            "url": `https://fcm.googleapis.com/v1/projects/${key.project_id}/messages:send`
         }).then(() => {
             console.log("Sent!");
         }).catch(err => {
